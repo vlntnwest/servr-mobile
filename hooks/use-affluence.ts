@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useRestaurant } from "@/context/restaurant";
 import { apiFetch, getRestaurantId } from "@/lib/api";
 import { PreparationLevel, Restaurant } from "@/types/api";
@@ -17,12 +17,6 @@ export function useAffluence() {
   const level: PreparationLevel =
     optimisticLevel ?? selectedRestaurant?.preparationLevel ?? "EASY";
 
-  console.log("[affluence] optimistic:", optimisticLevel, "| context:", selectedRestaurant?.preparationLevel, "| displayed:", level);
-
-  useEffect(() => {
-    console.log("[affluence] selectedRestaurant changed →", selectedRestaurant?.id, "preparationLevel:", selectedRestaurant?.preparationLevel);
-  }, [selectedRestaurant]);
-
   const setLevel = useCallback(
     async (newLevel: PreparationLevel) => {
       const previous = selectedRestaurant?.preparationLevel ?? null;
@@ -37,8 +31,8 @@ export function useAffluence() {
       if ("error" in result) {
         setOptimisticLevel(previous);
       } else {
-        setOptimisticLevel(null);
         await refresh();
+        setOptimisticLevel(null);
       }
     },
     [selectedRestaurant?.preparationLevel, refresh],
