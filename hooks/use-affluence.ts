@@ -7,15 +7,18 @@ export const PREP_LEVEL_LABELS: Record<PreparationLevel, string> = {
   EASY: "~15 min",
   MEDIUM: "~25 min",
   BUSY: "~40 min",
-  CLOSED: "Fermé",
 };
 
 export function useAffluence() {
   const { selectedRestaurant, refresh } = useRestaurant();
   const [optimisticLevel, setOptimisticLevel] = useState<PreparationLevel | null>(null);
+  const [optimisticIsOpen, setOptimisticIsOpen] = useState<boolean | null>(null);
 
   const level: PreparationLevel =
     optimisticLevel ?? selectedRestaurant?.preparationLevel ?? "EASY";
+
+  const isOpen: boolean =
+    optimisticIsOpen ?? selectedRestaurant?.isOpen ?? false;
 
   const setLevel = useCallback(
     async (newLevel: PreparationLevel) => {
@@ -38,5 +41,26 @@ export function useAffluence() {
     [selectedRestaurant?.preparationLevel, refresh],
   );
 
-  return { level, setLevel };
+  const setOpen = useCallback(
+    async (next: boolean) => {
+      const previous = selectedRestaurant?.isOpen ?? false;
+      setOptimisticIsOpen(next);
+      const result = await apiFetch(
+        `/restaurants/${getRestaurantId()}/open-state`,
+        {
+          method: "PATCH",
+          body: JSON.stringify({ isOpen: next }),
+        },
+      );
+      if ("error" in result) {
+        setOptimisticIsOpen(previous);
+      } else {
+        await refresh();
+        setOptimisticIsOpen(null);
+      }
+    },
+    [selectedRestaurant?.isOpen, refresh],
+  );
+
+  return { level, setLevel, isOpen, setOpen };
 }
