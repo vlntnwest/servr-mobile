@@ -1,14 +1,19 @@
 import { useEffect, useRef } from "react";
 import { AppState, AppStateStatus } from "react-native";
 import { useRestaurant } from "@/context/restaurant";
-import { useAutoOpenClose } from "./use-auto-open-close";
+import { useOpeningPrompt } from "./use-opening-prompt";
 import { useScheduleOpeningNotification } from "./use-schedule-opening-notification";
 
 export function useAppLifecycle() {
   const { refresh } = useRestaurant();
-  const { check: checkOpenClose } = useAutoOpenClose();
+  const { check: checkOpeningPrompt } = useOpeningPrompt();
   const { check: checkNotification } = useScheduleOpeningNotification();
   const appState = useRef<AppStateStatus>(AppState.currentState);
+
+  useEffect(() => {
+    checkOpeningPrompt();
+    checkNotification();
+  }, [checkOpeningPrompt, checkNotification]);
 
   useEffect(() => {
     const subscription = AppState.addEventListener(
@@ -19,12 +24,12 @@ export function useAppLifecycle() {
 
         if (nextState === "active" && prevState !== "active") {
           await refresh();
-          await checkOpenClose();
+          await checkOpeningPrompt();
           await checkNotification();
         }
       },
     );
 
     return () => subscription.remove();
-  }, [refresh, checkOpenClose, checkNotification]);
+  }, [refresh, checkOpeningPrompt, checkNotification]);
 }
