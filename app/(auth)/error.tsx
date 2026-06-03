@@ -33,7 +33,7 @@ export default function ConnectionError() {
         </Pressable>
 
         <Pressable
-          onPress={() => supabase.auth.signOut()}
+          onPress={() => supabase.auth.signOut({ scope: "local" })}
           className="w-full items-center py-2"
         >
           <Text className="font-sans-medium text-action text-muted-foreground">
