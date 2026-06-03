@@ -44,7 +44,7 @@ export default function Login() {
         className="flex-1"
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <View className="flex-1 px-7 pt-13">
+        <View className="flex-1 px-7 pt-13 max-w-sm mx-auto w-full">
           <View className="mb-2">
             <Text className="font-display text-display-sm leading-none tracking-tighter text-foreground">
               My<Text className="text-primary">.</Text>
