@@ -70,7 +70,7 @@ export default function SettingsList() {
 
       <Button
         variant="link"
-        onPress={() => supabase.auth.signOut()}
+        onPress={() => supabase.auth.signOut({ scope: "local" })}
         className="mt-4"
       >
         <Text>Se déconnecter</Text>
