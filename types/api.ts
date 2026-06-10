@@ -94,12 +94,13 @@ export type OrderProduct = {
 };
 
 export type OrderStatus =
-  | "PENDING"
-  | "PENDING_ON_SITE_PAYMENT"
+  | "DRAFT"
+  | "AWAITING_ACCEPTANCE"
   | "IN_PROGRESS"
   | "COMPLETED"
   | "DELIVERED"
-  | "CANCELLED";
+  | "CANCELLED"
+  | "EXPIRED";
 
 export type Order = {
   id: string;
@@ -112,6 +113,7 @@ export type Order = {
   totalPrice: string;
   stripePaymentIntentId: string | null;
   scheduledFor: string | null;
+  requestExpiresAt: string | null;
   createdAt: string;
   updatedAt: string;
   orderProducts: OrderProduct[];
