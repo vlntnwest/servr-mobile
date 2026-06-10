@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { Countdown } from "@/components/ui/countdown";
 import { Text } from "@/components/ui/text";
 import { BRAND } from "@/lib/constants";
 import {
@@ -56,6 +57,12 @@ export default function OrderCard({
           >
             {itemCount} article{itemCount > 1 ? "s" : ""} · {time}
           </Text>
+          {order.status === "AWAITING_ACCEPTANCE" && (
+            <Countdown
+              expiresAt={order.requestExpiresAt}
+              className="font-sans-semibold text-brand-orange"
+            />
+          )}
         </View>
 
         <View className="items-end justify-between pl-5">

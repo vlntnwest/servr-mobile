@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Countdown } from "@/components/ui/countdown";
 import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
 import { BRAND } from "@/lib/constants";
@@ -64,24 +65,27 @@ export default function OrderDetail({
 
       <Separator />
 
-      {/* On-site payment notice */}
-      {order.status === "PENDING_ON_SITE_PAYMENT" && (
+      {/* Demande en attente */}
+      {order.status === "AWAITING_ACCEPTANCE" && (
         <View
-          className="flex-row items-center gap-3 rounded-card px-4 py-3"
+          className="flex-row items-center justify-between rounded-card px-4 py-3"
           style={{ backgroundColor: BRAND.orange + "20" }}
         >
-          <Text className="text-lg">💳</Text>
           <View className="flex-1">
             <Text
               className="font-sans-semibold text-body-sm"
               style={{ color: BRAND.orange }}
             >
-              Paiement à régler au retrait
+              Demande à accepter
             </Text>
             <Text className="text-body-sm text-muted-foreground">
-              Le client paiera {formatEuros(parseFloat(order.totalPrice))} sur place
+              Paiement pré-autorisé — capturé seulement si tu acceptes
             </Text>
           </View>
+          <Countdown
+            expiresAt={order.requestExpiresAt}
+            className="font-sans-semibold text-heading"
+          />
         </View>
       )}
 
