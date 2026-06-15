@@ -43,12 +43,12 @@ export function formatEuros(amount: number): string {
 
 export function getOrderStatusLabel(status: string): string {
   const labels: Record<string, string> = {
-    PENDING: "En attente",
-    PENDING_ON_SITE_PAYMENT: "À encaisser",
+    AWAITING_ACCEPTANCE: "À accepter",
     IN_PROGRESS: "En cours",
     COMPLETED: "Prêt",
     DELIVERED: "Livré",
     CANCELLED: "Annulé",
+    EXPIRED: "Expirée",
   };
   return labels[status] ?? status;
 }
@@ -77,13 +77,9 @@ export type StatusAction = {
 
 export function getStatusActions(status: string): StatusAction[] {
   const actions: Record<string, StatusAction[]> = {
-    PENDING: [
+    AWAITING_ACCEPTANCE: [
       { targetStatus: "IN_PROGRESS", label: "Accepter", variant: "default" },
-      { targetStatus: "CANCELLED", label: "Annuler", variant: "destructive" },
-    ],
-    PENDING_ON_SITE_PAYMENT: [
-      { targetStatus: "IN_PROGRESS", label: "Accepter", variant: "default" },
-      { targetStatus: "CANCELLED", label: "Annuler", variant: "destructive" },
+      { targetStatus: "CANCELLED", label: "Refuser", variant: "destructive" },
     ],
     IN_PROGRESS: [
       { targetStatus: "COMPLETED", label: "Prêt", variant: "default" },
@@ -102,15 +98,12 @@ export function getOrderStatusBadge(status: string): {
   text: string;
 } {
   const badges: Record<string, { bg: string; text: string }> = {
-    PENDING: { bg: "bg-brand-yellow", text: "text-brand-forest" },
-    PENDING_ON_SITE_PAYMENT: {
-      bg: "bg-brand-orange",
-      text: "text-brand-cream",
-    },
+    AWAITING_ACCEPTANCE: { bg: "bg-brand-yellow", text: "text-brand-forest" },
     IN_PROGRESS: { bg: "bg-brand-orange", text: "text-brand-cream" },
     COMPLETED: { bg: "bg-brand-lime", text: "text-brand-forest" },
     DELIVERED: { bg: "bg-brand-lime", text: "text-brand-forest" },
     CANCELLED: { bg: "bg-brand-maroon", text: "text-brand-pink" },
+    EXPIRED: { bg: "bg-brand-maroon", text: "text-brand-pink" },
   };
   return badges[status] ?? { bg: "bg-muted", text: "text-muted-foreground" };
 }

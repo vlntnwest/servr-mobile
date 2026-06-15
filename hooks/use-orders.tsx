@@ -2,7 +2,7 @@ import { useRestaurant } from "@/context/restaurant";
 import { apiFetch, getOrder, updateOrderStatus } from "@/lib/api";
 import { Order } from "@/types/api";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Alert, AppState } from "react-native";
+import { Alert, AppState, Vibration } from "react-native";
 import { supabase } from "@/lib/supabase";
 import { usePrinter } from "@/context/printer";
 import { useAuth } from "@/context/auth";
@@ -30,7 +30,7 @@ export const useOrders = () => {
     setIsLoading(true);
     setError(null);
     const result = await apiFetch<Order[]>(
-      `/restaurants/${selectedRestaurant.id}/orders?status=PENDING_ON_SITE_PAYMENT,PENDING,IN_PROGRESS,COMPLETED`,
+      `/restaurants/${selectedRestaurant.id}/orders?status=AWAITING_ACCEPTANCE,IN_PROGRESS,COMPLETED`,
     );
     if ("error" in result) {
       setError(result.error);
@@ -60,14 +60,22 @@ export const useOrders = () => {
       })
       .on("broadcast", { event: "UPDATE" }, async (payload) => {
         const { record, old_record } = payload.payload;
-        if (old_record?.status === "DRAFT" && record?.status === "PENDING") {
+        // Alerte foreground : nouvelle demande OU relance (le serveur réécrit last_notified_at
+        // toutes les 2 min → re-broadcast d'un UPDATE avec record.status toujours AWAITING_ACCEPTANCE).
+        if (record?.status === "AWAITING_ACCEPTANCE") {
+          Vibration.vibrate([0, 400, 150, 400]);
+        }
+        if (
+          old_record?.status === "DRAFT" &&
+          record?.status === "AWAITING_ACCEPTANCE"
+        ) {
           const autoValidate = await AsyncStorage.getItem("autoValidate");
           if (autoValidate === "true") {
             await updateOrderStatus(record.id, "IN_PROGRESS");
           }
         }
         if (
-          old_record?.status === "PENDING" &&
+          old_record?.status === "AWAITING_ACCEPTANCE" &&
           record?.status === "IN_PROGRESS"
         ) {
           if (printerStatusRef.current !== "connected") {

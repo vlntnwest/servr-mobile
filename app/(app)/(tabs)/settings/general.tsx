@@ -80,7 +80,7 @@ export default function General() {
             <View className="rounded-[30px] overflow-hidden">
               <Row
                 label="Validation automatique"
-                sub="Imprimer le ticket lors du passage en préparation"
+                sub="Accepte automatiquement les commandes lors des horaires d'ouvertures"
                 left={
                   <IconBox bg={BRAND.orange}>
                     <IconSymbol name="printer.fill" size={15} color="white" />
