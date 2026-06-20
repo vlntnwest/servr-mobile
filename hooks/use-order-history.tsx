@@ -20,7 +20,7 @@ export function useOrderHistory() {
       setError(null);
 
       const result = await apiFetch<Order[]>(
-        `/restaurants/${selectedRestaurant.id}/orders?status=DELIVERED,CANCELLED&page=${pageToFetch}&limit=20`,
+        `/restaurants/${selectedRestaurant.id}/orders?status=DELIVERED,CANCELLED,EXPIRED&page=${pageToFetch}&limit=20`,
       );
 
       if ("error" in result) {
