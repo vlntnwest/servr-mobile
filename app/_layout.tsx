@@ -43,7 +43,7 @@ const DarkBrandTheme = {
 };
 
 function InitialLayout() {
-  const { session, initialized } = useAuth();
+  const { session, initialized, recovering } = useAuth();
   usePushNotifications(!!session);
   const {
     restaurants,
@@ -59,6 +59,10 @@ function InitialLayout() {
     if (!initialized || isLoading) return;
 
     SplashScreen.hideAsync();
+
+    // Réinitialisation de mot de passe en cours : on laisse l'écran (auth) piloter
+    // la navigation (étape « nouveau mot de passe »), sans rediriger dans l'app.
+    if (recovering) return;
 
     const inAuthGroup = segments[0] === "(auth)";
     const inSelectGroup = segments[0] === "(select)";
@@ -78,6 +82,7 @@ function InitialLayout() {
   }, [
     session,
     initialized,
+    recovering,
     segments,
     isLoading,
     restaurantError,
