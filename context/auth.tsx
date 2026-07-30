@@ -6,16 +6,24 @@ import { supabase } from "@/lib/supabase";
 type AuthContextType = {
   session: Session | null;
   initialized: boolean;
+  // Pendant une réinitialisation de mot de passe, verifyOtp ouvre une session
+  // mais on ne veut PAS router l'utilisateur dans l'app tant qu'il n'a pas
+  // choisi son nouveau mot de passe. Ce flag suspend le garde-fou du layout.
+  recovering: boolean;
+  setRecovering: (value: boolean) => void;
 };
 
 const AuthContext = createContext<AuthContextType>({
   session: null,
   initialized: false,
+  recovering: false,
+  setRecovering: () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [initialized, setInitialized] = useState(false);
+  const [recovering, setRecovering] = useState(false);
 
   useEffect(() => {
     const {
@@ -32,7 +40,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ session, initialized }}>
+    <AuthContext.Provider
+      value={{ session, initialized, recovering, setRecovering }}
+    >
       {children}
     </AuthContext.Provider>
   );
