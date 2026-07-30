@@ -9,6 +9,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from "expo-router";
 import { supabase } from "@/lib/supabase";
 
 type Field = "email" | "password" | null;
@@ -104,7 +105,11 @@ export default function Login() {
               </View>
             </View>
 
-            <Pressable className="-mt-2 self-end" hitSlop={6}>
+            <Pressable
+              onPress={() => router.push("/forgot-password")}
+              className="-mt-2 self-end"
+              hitSlop={6}
+            >
               <Text className="font-sans-medium text-action text-muted-foreground">
                 Mot de passe oublié ?
               </Text>
