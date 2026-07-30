@@ -14,6 +14,7 @@ import { Order } from "@/types/api";
 import { ScrollView, View } from "react-native";
 import OrderOptions from "./orderOptions";
 import { usePrinter } from "@/context/printer";
+import { useRestaurant } from "@/context/restaurant";
 
 type Props = {
   order: Order;
@@ -29,6 +30,7 @@ export default function OrderDetail({
   const { bg, text } = getOrderStatusBadge(order.status);
   const actions = getStatusActions(order.status);
   const { printOrder } = usePrinter();
+  const { selectedRestaurant } = useRestaurant();
 
   const createdAt = new Date(order.createdAt).toLocaleDateString("fr-FR", {
     day: "2-digit",
@@ -39,7 +41,7 @@ export default function OrderDetail({
   });
 
   const handlePrint = () => {
-    printOrder(order);
+    printOrder(order, selectedRestaurant);
   };
 
   return (
